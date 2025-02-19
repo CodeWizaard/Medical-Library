@@ -1,37 +1,35 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtGui import QGuiApplication, QPainter, QColor
 
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Окно с боковой панелью")
-        self.setGeometry(100, 100, 800, 600)  # Размер окна
+        # Получаем информацию о размере экрана
+        screen = QGuiApplication.primaryScreen()
+        screen_geometry = screen.geometry()
+        screen_width = screen_geometry.width()
+        screen_height = screen_geometry.height()
 
-        # Создаем основной горизонтальный макет
-        main_layout = QHBoxLayout(self)
+        # Вычисляем 30% от ширины и высоты экрана
+        min_width = int(screen_width * 0.3)
+        min_height = int(screen_height * 0.6)
 
-        # Создаем панель, занимающую 20% ширины окна
-        panel = QFrame(self)
-        panel.setStyleSheet("background-color: lightgray;")
-        panel.setFixedWidth(self.width() * 0.2)  # 20% ширины окна
+        # Устанавливаем минимальный размер окна
+        self.setMinimumSize(min_width, min_height)
 
-        # Создаем основной виджет
-        main_content = QWidget(self)
-        main_content.setStyleSheet("background-color: white;")
+        self.setWindowTitle("Окно с минимальным размером 30% от экрана")
+        self.setGeometry(100, 100, min_width, min_height)  # Устанавливаем начальный размер окна
 
-        # Добавляем панель и основной виджет в основной макет
-        main_layout.addWidget(panel)
-        main_layout.addWidget(main_content)
+        # Вычисляем ширину блока (10% от ширины экрана)
+        self.block_width = int(screen_width * 0.05)
+        self.block_height = 10000  # Блок занимает всю высоту окна
 
-        # Устанавливаем основной макет для окна
-        self.setLayout(main_layout)
-
-    def resizeEvent(self, event):
-        # Обновляем ширину панели при изменении размера окна
-        self.layout().itemAt(0).widget().setFixedWidth(self.width() * 0.2)
-        super().resizeEvent(event)
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setBrush(QColor(0, 255, 0,55))  # Устанавливаем цвет фона блока (зеленый)
+        painter.drawRect(0, 0, self.block_width, self.block_height)  # Рисуем блок
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
