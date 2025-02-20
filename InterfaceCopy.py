@@ -2,6 +2,7 @@ import sys
 from PyQt6.QtWidgets import QApplication, QWidget
 from PyQt6.QtGui import QGuiApplication, QPainter, QColor
 
+
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -28,8 +29,16 @@ class MyWindow(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        painter.setBrush(QColor(0, 255, 0,55))  # Устанавливаем цвет фона блока (зеленый)
-        painter.drawRect(0, 0, self.block_width, self.block_height)  # Рисуем блок
+
+        # Устанавливаем цвет заливки блока (зеленый с прозрачностью)
+        painter.setBrush(QColor(0, 255, 0, 55))
+
+        # Убираем обводку (не рисуем её)
+        painter.setPen(QColor(0, 0, 0, 0))  # Устанавливаем прозрачную обводку
+
+        # Рисуем блок без обводки
+        painter.drawRect(0, 0, self.block_width, self.block_height)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
