@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt6.QtGui import QGuiApplication, QPainter, QColor
 
 
@@ -26,6 +26,21 @@ class MyWindow(QWidget):
         # Вычисляем ширину блока (10% от ширины экрана)
         self.block_width = int(screen_width * 0.05)
         self.block_height = 10000  # Блок занимает всю высоту окна
+
+        # Создаем кнопки без текста
+        self.button1 = QPushButton(self)
+        self.button2 = QPushButton(self)
+
+        # Делаем кнопки квадратными с фиксированным размером
+        screen_w = int(screen_width * 0.05)
+        button_size = screen_w * 0.5
+        button_padding = button_size/2 # Размер кнопки
+        self.button1.setFixedSize(button_size, button_size)
+        self.button2.setFixedSize(button_size, button_size)
+
+        # Устанавливаем позиции кнопок
+        self.button1.setGeometry(button_padding, 30, button_size, button_size)  # Кнопка 1 в левом верхнем углу
+        self.button2.setGeometry(button_padding, 200, button_size, button_size)  # Кнопка 2 чуть ниже первой
 
     def paintEvent(self, event):
         painter = QPainter(self)
