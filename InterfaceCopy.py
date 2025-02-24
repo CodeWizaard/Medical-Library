@@ -20,7 +20,7 @@ class MyWindow(QWidget):
         # Устанавливаем минимальный размер окна
         self.setMinimumSize(min_width, min_height)
 
-        self.setWindowTitle("Переключение экранов")
+        self.setWindowTitle("Окно с минимальным размером 30% от экрана")
         self.setGeometry(100, 100, min_width, min_height)  # Устанавливаем начальный размер окна
 
         # Вычисляем ширину блока (10% от ширины экрана)
@@ -42,42 +42,36 @@ class MyWindow(QWidget):
         self.button1.setGeometry(button_padding, 30, button_size, button_size)  # Кнопка 1 в левом верхнем углу
         self.button2.setGeometry(button_padding, 200, button_size, button_size)  # Кнопка 2 чуть ниже первой
 
-        # Подключаем обработчики нажатий кнопок
-        self.button1.clicked.connect(self.show_blue_screen)
-        self.button2.clicked.connect(self.show_green_screen)
+        # Устанавливаем начальный цвет фона окна (цвет, который будет выбран первой кнопкой)
+        self.bg_color = QColor(200, 255, 200)  # Очень светлый зелёный
+        self.setStyleSheet("background-color: rgb(200, 255, 200);")
 
-        # Флаг для отслеживания текущего экрана
-        self.current_screen = "blue"
+        # Устанавливаем цвет левого блока (спокойный бежевый)
+        self.block_color = QColor(245, 245, 220)  # Бежевый цвет
+        self.button1.clicked.connect(self.change_background_color_green)
+        self.button2.clicked.connect(self.change_background_color_blue)
+
+    def change_background_color_green(self):
+        # Меняем цвет фона на светло-зелёный
+        self.bg_color = QColor(200, 255, 200)  # Очень светлый зелёный
+        self.setStyleSheet(f"background-color: rgb({self.bg_color.red()}, {self.bg_color.green()}, {self.bg_color.blue()});")
+
+    def change_background_color_blue(self):
+        # Меняем цвет фона на светло-синий
+        self.bg_color = QColor(173, 216, 230)  # Светло-синий
+        self.setStyleSheet(f"background-color: rgb({self.bg_color.red()}, {self.bg_color.green()}, {self.bg_color.blue()});")
 
     def paintEvent(self, event):
         painter = QPainter(self)
 
-        # Устанавливаем цвет фона в зависимости от текущего экрана
-        if self.current_screen == "blue":
-            painter.setBrush(QColor(0, 0, 255))  # Синий цвет
-        elif self.current_screen == "green":
-            painter.setBrush(QColor(0, 255, 0))  # Зелёный цвет
+        # Устанавливаем цвет заливки блока (бежевый)
+        painter.setBrush(self.block_color)
 
         # Убираем обводку (не рисуем её)
         painter.setPen(QColor(0, 0, 0, 0))  # Устанавливаем прозрачную обводку
 
-        # Рисуем прямоугольник, заполняющий экран
-        painter.drawRect(0, 0, self.width(), self.height())
-
-        # Зелёный элемент слева
-        painter.setBrush(QColor(0, 255, 0, 55))  # Зелёный с прозрачностью
-        painter.setPen(QColor(0, 0, 0, 0))  # Убираем обводку
+        # Рисуем блок без обводки
         painter.drawRect(0, 0, self.block_width, self.block_height)
-
-    def show_blue_screen(self):
-        """Переключить экран на синий"""
-        self.current_screen = "blue"
-        self.update()  # Обновить окно для перерисовки синим фоном
-
-    def show_green_screen(self):
-        """Переключить экран на зелёный"""
-        self.current_screen = "green"
-        self.update()  # Обновить окно для перерисовки зелёным фоном
 
 
 if __name__ == "__main__":
