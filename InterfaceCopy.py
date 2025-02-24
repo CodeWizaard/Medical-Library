@@ -45,15 +45,17 @@ class MyWindow(QWidget):
         # Создаем два раздела
         self.section1 = QWidget(self)
         self.section1.setGeometry(150, 30, min_width - 180, min_height - 60)
-        self.section1.setStyleSheet("background-color: rgb(200, 255, 200);")  # Светло-зеленый
-        label1 = QLabel("Это раздел 1", self.section1)
+        self.section1.setStyleSheet("background-color: rgb(200, 255, 200); border-radius: 15px;")  # Светло-зеленый с закруглениями
+        label1 = QLabel("Данные пациента", self.section1)  # Заголовок для первого раздела
         label1.move(20, 20)
+        label1.setStyleSheet("font-size: 30px; font-family: 'Roboto', sans-serif; font-weight: bold;")  # Новый шрифт Roboto
 
         self.section2 = QWidget(self)
         self.section2.setGeometry(150, 30, min_width - 180, min_height - 60)
-        self.section2.setStyleSheet("background-color: rgb(173, 216, 230);")  # Светло-синий
-        label2 = QLabel("Это раздел 2", self.section2)
+        self.section2.setStyleSheet("background-color: rgb(173, 216, 230); border-radius: 15px;")  # Светло-синий с закруглениями
+        label2 = QLabel("Учет упражнений", self.section2)  # Заголовок для второго раздела
         label2.move(20, 20)
+        label2.setStyleSheet("font-size: 30px; font-family: 'Roboto', sans-serif; font-weight: bold;")  # Новый шрифт Roboto
 
         # Изначально показываем раздел 1
         self.section1.show()
