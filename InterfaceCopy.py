@@ -1,6 +1,6 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton
-from PyQt6.QtGui import QGuiApplication, QPainter, QColor
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt6.QtGui import QGuiApplication, QColor
 
 
 class MyWindow(QWidget):
@@ -23,11 +23,7 @@ class MyWindow(QWidget):
         self.setWindowTitle("Окно с минимальным размером 30% от экрана")
         self.setGeometry(100, 100, min_width, min_height)  # Устанавливаем начальный размер окна
 
-        # Вычисляем ширину блока (10% от ширины экрана)
-        self.block_width = int(screen_width * 0.05)
-        self.block_height = 10000  # Блок занимает всю высоту окна
-
-        # Создаем кнопки без текста
+        # Создаем кнопки для переключения
         self.button1 = QPushButton(self)
         self.button2 = QPushButton(self)
 
@@ -39,39 +35,37 @@ class MyWindow(QWidget):
         self.button2.setFixedSize(button_size, button_size)
 
         # Устанавливаем позиции кнопок
-        self.button1.setGeometry(button_padding, 30, button_size, button_size)  # Кнопка 1 в левом верхнем углу
-        self.button2.setGeometry(button_padding, 200, button_size, button_size)  # Кнопка 2 чуть ниже первой
+        self.button1.setGeometry(button_padding, 30, button_size, button_size)
+        self.button2.setGeometry(button_padding, 200, button_size, button_size)
 
-        # Устанавливаем начальный цвет фона окна (цвет, который будет выбран первой кнопкой)
-        self.bg_color = QColor(200, 255, 200)  # Очень светлый зелёный
-        self.setStyleSheet("background-color: rgb(200, 255, 200);")
+        # Связываем кнопки с функциями
+        self.button1.clicked.connect(self.show_section1)
+        self.button2.clicked.connect(self.show_section2)
 
-        # Устанавливаем цвет левого блока (спокойный бежевый)
-        self.block_color = QColor(245, 245, 220)  # Бежевый цвет
-        self.button1.clicked.connect(self.change_background_color_green)
-        self.button2.clicked.connect(self.change_background_color_blue)
+        # Создаем два раздела
+        self.section1 = QWidget(self)
+        self.section1.setGeometry(150, 30, min_width - 180, min_height - 60)
+        self.section1.setStyleSheet("background-color: rgb(200, 255, 200);")  # Светло-зеленый
+        label1 = QLabel("Это раздел 1", self.section1)
+        label1.move(20, 20)
 
-    def change_background_color_green(self):
-        # Меняем цвет фона на светло-зелёный
-        self.bg_color = QColor(200, 255, 200)  # Очень светлый зелёный
-        self.setStyleSheet(f"background-color: rgb({self.bg_color.red()}, {self.bg_color.green()}, {self.bg_color.blue()});")
+        self.section2 = QWidget(self)
+        self.section2.setGeometry(150, 30, min_width - 180, min_height - 60)
+        self.section2.setStyleSheet("background-color: rgb(173, 216, 230);")  # Светло-синий
+        label2 = QLabel("Это раздел 2", self.section2)
+        label2.move(20, 20)
 
-    def change_background_color_blue(self):
-        # Меняем цвет фона на светло-синий
-        self.bg_color = QColor(173, 216, 230)  # Светло-синий
-        self.setStyleSheet(f"background-color: rgb({self.bg_color.red()}, {self.bg_color.green()}, {self.bg_color.blue()});")
+        # Изначально показываем раздел 1
+        self.section1.show()
+        self.section2.hide()
 
-    def paintEvent(self, event):
-        painter = QPainter(self)
+    def show_section1(self):
+        self.section1.show()
+        self.section2.hide()
 
-        # Устанавливаем цвет заливки блока (бежевый)
-        painter.setBrush(self.block_color)
-
-        # Убираем обводку (не рисуем её)
-        painter.setPen(QColor(0, 0, 0, 0))  # Устанавливаем прозрачную обводку
-
-        # Рисуем блок без обводки
-        painter.drawRect(0, 0, self.block_width, self.block_height)
+    def show_section2(self):
+        self.section1.hide()
+        self.section2.show()
 
 
 if __name__ == "__main__":
