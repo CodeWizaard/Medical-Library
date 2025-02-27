@@ -57,7 +57,7 @@ class MyWindow(QWidget):
 
         input_field = QLineEdit(self.section1)
         input_field.move(150, 100)
-        input_field.setFixedWidth(min_width - 200)
+        input_field.setFixedWidth(int(screen_width * 0.1))  # Ширина 10% от ширины экрана
         input_field.setStyleSheet("background-color: white;")  # Белый фон для поля ввода
 
         self.section2 = QWidget(self)
