@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit
 from PyQt6.QtGui import QGuiApplication, QColor
 
 
@@ -49,6 +49,16 @@ class MyWindow(QWidget):
         label1 = QLabel("Данные пациента", self.section1)  # Заголовок для первого раздела
         label1.move(20, 20)
         label1.setStyleSheet("font-size: 30px; font-family: 'Roboto', sans-serif; font-weight: bold;")  # Новый шрифт Roboto
+
+        # Добавляем QLabel и QLineEdit на первый виджет
+        label_input = QLabel("Введите имя:", self.section1)
+        label_input.move(20, 100)
+        label_input.setStyleSheet("font-size: 18px; font-family: 'Roboto', sans-serif;")
+
+        input_field = QLineEdit(self.section1)
+        input_field.move(150, 100)
+        input_field.setFixedWidth(min_width - 200)
+        input_field.setStyleSheet("background-color: white;")  # Белый фон для поля ввода
 
         self.section2 = QWidget(self)
         self.section2.setGeometry(150, 30, min_width - 180, min_height - 60)
