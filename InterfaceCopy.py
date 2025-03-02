@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit
-from PyQt6.QtGui import QGuiApplication, QColor
+from PyQt6.QtGui import QGuiApplication
 
 
 class MyWindow(QWidget):
@@ -8,29 +8,35 @@ class MyWindow(QWidget):
         super().__init__()
 
         # Получаем информацию о размере экрана
-        screen = QGuiApplication.primaryScreen()
-        screen_geometry = screen.geometry()
-        screen_width = screen_geometry.width()
-        screen_height = screen_geometry.height()
-
-        # Вычисляем 30% от ширины и высоты экрана
-        min_width = int(screen_width * 0.3)
-        min_height = int(screen_height * 0.6)
+        self.screen = QGuiApplication.primaryScreen()
+        self.screen_geometry = self.screen.geometry()
+        self.screen_width = self.screen_geometry.width()
+        self.screen_height = self.screen_geometry.height()
 
         # Устанавливаем минимальный размер окна
-        self.setMinimumSize(min_width, min_height)
-
+        self.min_width = int(self.screen_width * 0.3)
+        self.min_height = int(self.screen_height * 0.6)
+        self.setMinimumSize(self.min_width, self.min_height)
         self.setWindowTitle("Окно с минимальным размером 30% от экрана")
-        self.setGeometry(100, 100, min_width, min_height)  # Устанавливаем начальный размер окна
+        self.setGeometry(100, 100, self.min_width, self.min_height)
 
         # Создаем кнопки для переключения
+        self.create_buttons()
+
+        # Создаем разделы
+        self.create_sections()
+
+        # Изначально показываем раздел 1
+        self.section1.show()
+        self.section2.hide()
+
+    def create_buttons(self):
+        """Создаёт кнопки для переключения разделов."""
+        button_size = int(self.screen_width * 0.05 * 0.5)
+        button_padding = button_size / 2  # Размер кнопки
         self.button1 = QPushButton(self)
         self.button2 = QPushButton(self)
 
-        # Делаем кнопки квадратными с фиксированным размером
-        screen_w = int(screen_width * 0.05)
-        button_size = screen_w * 0.5
-        button_padding = button_size / 2  # Размер кнопки
         self.button1.setFixedSize(button_size, button_size)
         self.button2.setFixedSize(button_size, button_size)
 
@@ -42,40 +48,51 @@ class MyWindow(QWidget):
         self.button1.clicked.connect(self.show_section1)
         self.button2.clicked.connect(self.show_section2)
 
-        # Создаем два раздела
-        self.section1 = QWidget(self)
-        self.section1.setGeometry(150, 30, min_width - 180, min_height - 60)
-        self.section1.setStyleSheet("background-color: rgb(200, 255, 200); border-radius: 15px;")  # Светло-зеленый с закруглениями
-        label1 = QLabel("Данные пациента", self.section1)  # Заголовок для первого раздела
-        label1.move(20, 20)
-        label1.setStyleSheet("font-size: 30px; font-family: 'Roboto', sans-serif; font-weight: bold;")  # Новый шрифт Roboto
+    def create_sections(self):
+        """Создаёт два раздела приложения."""
+        # Раздел 1
+        self.section1 = self.create_section("rgb(200, 255, 200)", 150, 30, self.min_width - 180, self.min_height - 60)
+        self.add_patient_data_section(self.section1)
 
-        # Добавляем QLabel и QLineEdit на первый виджет
-        label_input = QLabel("Введите имя:", self.section1)
+        # Раздел 2
+        self.section2 = self.create_section("rgb(173, 216, 230)", 150, 30, self.min_width - 180, self.min_height - 60)
+        self.add_exercise_section(self.section2)
+
+    def create_section(self, background_color, x, y, width, height):
+        """Создаёт раздел с заданными параметрами."""
+        section = QWidget(self)
+        section.setGeometry(x, y, width, height)
+        section.setStyleSheet(f"background-color: {background_color}; border-radius: 15px;")
+        return section
+
+    def add_patient_data_section(self, section):
+        """Добавляет элементы в раздел данных пациента."""
+        label1 = QLabel("Данные пациента", section)
+        label1.move(20, 20)
+        label1.setStyleSheet("font-size: 30px; font-family: 'Roboto', sans-serif; font-weight: bold;")
+
+        label_input = QLabel("Имя:", section)
         label_input.move(20, 100)
         label_input.setStyleSheet("font-size: 18px; font-family: 'Roboto', sans-serif;")
 
-        input_field = QLineEdit(self.section1)
+        input_field = QLineEdit(section)
         input_field.move(150, 100)
-        input_field.setFixedWidth(int(screen_width * 0.1))  # Ширина 10% от ширины экрана
-        input_field.setStyleSheet("background-color: white;")  # Белый фон для поля ввода
+        input_field.setFixedWidth(int(self.screen_width * 0.1))
+        input_field.setStyleSheet("background-color: white;")
 
-        self.section2 = QWidget(self)
-        self.section2.setGeometry(150, 30, min_width - 180, min_height - 60)
-        self.section2.setStyleSheet("background-color: rgb(173, 216, 230); border-radius: 15px;")  # Светло-синий с закруглениями
-        label2 = QLabel("Учет упражнений", self.section2)  # Заголовок для второго раздела
+    def add_exercise_section(self, section):
+        """Добавляет элементы в раздел учета упражнений."""
+        label2 = QLabel("Учет упражнений", section)
         label2.move(20, 20)
-        label2.setStyleSheet("font-size: 30px; font-family: 'Roboto', sans-serif; font-weight: bold;")  # Новый шрифт Roboto
-
-        # Изначально показываем раздел 1
-        self.section1.show()
-        self.section2.hide()
+        label2.setStyleSheet("font-size: 30px; font-family: 'Roboto', sans-serif; font-weight: bold;")
 
     def show_section1(self):
+        """Показывает первый раздел и скрывает второй."""
         self.section1.show()
         self.section2.hide()
 
     def show_section2(self):
+        """Показывает второй раздел и скрывает первый."""
         self.section1.hide()
         self.section2.show()
 
