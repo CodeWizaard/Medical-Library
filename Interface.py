@@ -2,6 +2,8 @@ import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QVBoxLayout
 from PyQt6.QtGui import QGuiApplication
 
+from CryptoUtils import CryptoUtils
+
 
 class MyWindow(QWidget):
     def __init__(self):
@@ -25,11 +27,42 @@ class MyWindow(QWidget):
 
         # Создаем разделы
         self.create_sections()
+        self.load_and_fill_data()
 
         # Изначально показываем раздел 1
         self.section1.show()
         self.section2.hide()
 
+    def load_and_fill_data(self):
+        """Загружает и расшифровывает данные, заполняет поля на интерфейсе."""
+        # Создаём объект CryptoUtils для работы с данными
+        crypto_utils = CryptoUtils()
+
+        try:
+            # Загружаем расшифрованные данные
+            decrypted_data = crypto_utils.load_encrypted_data()
+
+            # Разбиваем расшифрованные данные на отдельные части
+            pressure, sugar = self.parse_data(decrypted_data)
+
+            # Заполняем текстовые поля
+            self.findChild(QLineEdit, "input_pressure").setText(pressure)
+            self.findChild(QLineEdit, "input_sugar").setText(sugar)
+
+            print("Данные успешно загружены и заполнены в поля.")
+
+        except Exception as e:
+            print(f"Ошибка при загрузке и заполнении данных: {e}")
+    def parse_data(self, decrypted_data):
+        """Разбирает расшифрованные данные на составляющие: давление и сахар."""
+        try:
+            parts = decrypted_data.split(", ")
+            pressure = parts[0].split(": ")[1] if len(parts) > 0 else ""
+            sugar = parts[1].split(": ")[1] if len(parts) > 1 else ""
+            return pressure, sugar
+        except Exception as e:
+            print(f"Ошибка при разборе данных: {e}")
+            return "", ""
     def create_buttons(self):
         """Создаёт кнопки для переключения разделов."""
         button_size = int(self.screen_width * 0.05 * 0.5)
@@ -81,6 +114,7 @@ class MyWindow(QWidget):
         input_pressure.setFixedWidth(int(self.screen_width * 0.1))
         input_pressure.setStyleSheet("background-color: white;")
         input_pressure.setPlaceholderText("Не требуется")  # Пустое значение по умолчанию
+        input_pressure.setObjectName("input_pressure")  # Установим имя для поиска
 
         # Уровень сахара в крови
         label_sugar = QLabel("Уровень сахара в крови:", section)
@@ -92,6 +126,7 @@ class MyWindow(QWidget):
         input_sugar.setFixedWidth(int(self.screen_width * 0.1))
         input_sugar.setStyleSheet("background-color: white;")
         input_sugar.setPlaceholderText("Не требуется")  # Пустое значение по умолчанию
+        input_sugar.setObjectName("input_sugar")  # Установим имя для поиска
 
         # Кнопка "Сохранить"
         save_button = QPushButton("Сохранить", section)
@@ -107,6 +142,9 @@ class MyWindow(QWidget):
         button_y = section.height() - button_height - 20  # Опускаем кнопку на 20 пикселей от нижнего края
 
         save_button.setGeometry(button_x, button_y, button_width, button_height)
+
+        # Привязка кнопки "Сохранить" к методу save_data
+        save_button.clicked.connect(self.save_data)
 
     def add_exercise_section(self, section):
         """Добавляет элементы в раздел учета упражнений."""
@@ -126,13 +164,15 @@ class MyWindow(QWidget):
 
     def save_data(self):
         """Обработчик для кнопки сохранения данных."""
-        # Для примера просто выводим введенные данные в консоль
         pressure = self.findChild(QLineEdit, "input_pressure").text()
         sugar = self.findChild(QLineEdit, "input_sugar").text()
 
-        # Сохраняем данные (или выводим их в консоль для проверки)
-        print(f"Давление: {pressure if pressure else 'Не указано'}")
-        print(f"Уровень сахара в крови: {sugar if sugar else 'Не указано'}")
+        # Составляем строку данных для шифрования
+        data = f"Давление: {pressure if pressure else 'Не указано'}, Уровень сахара в крови: {sugar if sugar else 'Не указано'}"
+
+        # Создаем объект CryptoUtils и сохраняем зашифрованные данные
+        crypto_utils = CryptoUtils()
+        crypto_utils.save_encrypted_data(data)
 
 
 if __name__ == "__main__":
