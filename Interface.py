@@ -1,6 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QVBoxLayout
 from PyQt6.QtGui import QGuiApplication
+from Train import ExerciseApp
 
 from CryptoUtils import CryptoUtils
 
@@ -148,9 +149,15 @@ class MyWindow(QWidget):
 
     def add_exercise_section(self, section):
         """Добавляет элементы в раздел учета упражнений."""
-        label2 = QLabel("Учет упражнений", section)
-        label2.move(20, 20)
-        label2.setStyleSheet("font-size: 30px; font-family: 'Roboto', sans-serif; font-weight: bold;")
+        # Убираем старую метку
+        for widget in section.findChildren(QLabel):
+            widget.deleteLater()
+
+        # Создаем виджет для учета упражнений
+        exercise_app = ExerciseApp()
+        exercise_app.setParent(section)
+        exercise_app.setGeometry(20, 20, section.width() - 40, section.height() - 40)
+        exercise_app.show()
 
     def show_section1(self):
         """Показывает первый раздел и скрывает второй."""
