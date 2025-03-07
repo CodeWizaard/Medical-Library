@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QPushButton, QListWidget, QMessageBox
-from CryptoUtils import CryptoUtils
+from CryptoUtilsTrain import CryptoUtils
 
 class ExerciseApp(QWidget):
     def __init__(self):
